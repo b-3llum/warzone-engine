@@ -30,7 +30,8 @@ export interface MatchPlayerInput {
   kills: number;
   deaths: number;
   placement: number;
-  uptimeSec: number;
+  /** Deprecated: accepted for backward compatibility and ignored. */
+  uptimeSec?: number;
 }
 
 export interface MatchInput {
@@ -58,7 +59,6 @@ export interface MatchHistoryEntry {
   placement: number;
   kills: number;
   deaths: number;
-  uptimeSec: number;
   /** Career KPG used for the kpg_delta term (pre-match value). */
   careerKpgBefore: number;
   mps: number;
@@ -79,7 +79,6 @@ export interface PlayerRecord {
   wins: number;
   totalKills: number;
   totalDeaths: number;
-  totalUptimeSec: number;
   createdAt: string;
   updatedAt: string;
   /** Most recent first, capped at HISTORY_LIMIT entries. */
@@ -121,7 +120,6 @@ export interface PlayerMatchResult {
   placement: number;
   kills: number;
   deaths: number;
-  uptimeSec: number;
   careerKpgBefore: number;
   kpgDelta: number;
   mps: number;

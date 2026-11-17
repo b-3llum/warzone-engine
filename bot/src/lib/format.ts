@@ -10,14 +10,6 @@ export const deltaArrow = (n: number): string => (n > 0 ? "▲" : n < 0 ? "▼" 
 export const formatDelta = (n: number | null | undefined, dp = 1): string =>
   n === null || n === undefined ? "—" : `${deltaArrow(n)} ${signed(n, dp)}`;
 
-export const formatUptime = (sec: number): string => {
-  const s = Math.round(sec);
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const r = s % 60;
-  return h > 0 ? `${h}:${String(m).padStart(2, "0")}:${String(r).padStart(2, "0")}` : `${m}:${String(r).padStart(2, "0")}`;
-};
-
 const SPARK = "▁▂▃▄▅▆▇█";
 
 /** Unicode sparkline of a numeric series (oldest → newest). */

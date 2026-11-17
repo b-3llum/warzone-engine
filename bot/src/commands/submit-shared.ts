@@ -1,7 +1,7 @@
 /**
  * Shared flow for /submit-2v2 and /submit-ffa:
  *   1. Slash command collects WHO played and placements → stored as a PendingMatch.
- *   2. A modal collects "kills deaths uptime" for each of the 4 players.
+ *   2. A modal collects "kills deaths" for each of the 4 players.
  *   3. POST /match with matchId = the slash command's interaction.id (idempotent).
  *   4. Public recap embed in the channel.
  * Parse errors, 400s and network failures keep the pending match and offer a
@@ -139,16 +139,16 @@ export function buildStatsModal(pending: PendingMatch, previous?: Map<string, st
       .setCustomId(`p${idx}`)
       .setStyle(TextInputStyle.Short)
       .setRequired(true)
-      .setMinLength(5)
-      .setMaxLength(32)
-      .setPlaceholder("kills deaths uptime — e.g. 7 2 12:30");
+      .setMinLength(3)
+      .setMaxLength(16)
+      .setPlaceholder("kills deaths — e.g. 7 2");
     const prev = previous?.get(`p${idx}`);
     if (prev) input.setValue(prev);
 
     modal.addLabelComponents(
       new LabelBuilder()
         .setLabel(slotLabel(p, pending.format))
-        .setDescription("Kills, deaths, uptime (seconds or mm:ss)")
+        .setDescription("Kills and deaths, separated by a space")
         .setTextInputComponent(input),
     );
   });
@@ -205,7 +205,7 @@ async function handleModal(interaction: ModalSubmitInteraction, [matchId]: strin
 
   if (errors.length) {
     await interaction.reply({
-      embeds: [warnEmbed("⚠️ Couldn't read some stats", `${errors.join("\n")}\n\nFormat: \`kills deaths uptime\`, e.g. \`7 2 12:30\`.`)],
+      embeds: [warnEmbed("⚠️ Couldn't read some stats", `${errors.join("\n")}\n\nFormat: \`kills deaths\`, e.g. \`7 2\`.`)],
       components: [retryRow(pending.matchId)],
       flags: MessageFlags.Ephemeral,
     });

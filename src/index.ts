@@ -163,7 +163,6 @@ async function handlePlayer(env: Env, id: string): Promise<Response> {
 
   return json({
     ...summarizePlayer(player, rank),
-    totalUptimeSec: player.totalUptimeSec,
     createdAt: player.createdAt,
     updatedAt: player.updatedAt,
     lastFiveDeltas: player.history.slice(0, 5).map((h) => ({

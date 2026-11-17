@@ -11,8 +11,7 @@ discord.js v14 + TypeScript frontend for the rating engine Worker in the reposit
 | `/submit-ffa` | everyone, or `SUBMITTER_ROLE_ID` | Pick players in finishing order → modal for stats → recap |
 | `/reset-season` | Administrator | Confirm button → archive + wipe season → announcement |
 
-Stats modal: one line per player, `kills deaths uptime`. Uptime can be seconds (`750`), `mm:ss` (`12:30`) or `h:mm:ss`.
-Separators can be spaces, commas or slashes: `7 2 12:30`, `7/2/750`.
+Stats modal: one line per player, `kills deaths`. Separators can be spaces, commas or slashes: `7 2`, `7/2`, `7, 2`.
 
 ## Setup
 1. Create an application at https://discord.com/developers/applications, add a bot, copy its token and the application ID.

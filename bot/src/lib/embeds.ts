@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import type { Leaderboard, MatchOutcome, PlayerDetail, PlayerMatchResult, PlayerSummary } from "../api/types.js";
-import { esc, formatDelta, formatUptime, placementLabel, signed, sparkline, truncate } from "./format.js";
+import { esc, formatDelta, placementLabel, signed, sparkline, truncate } from "./format.js";
 import {
   BRAND_COLOR,
   RANKED_TIERS,
@@ -121,12 +121,12 @@ export function playerCardEmbed(p: PlayerDetail, avatarUrl: string): EmbedBuilde
       { name: "Elo", value: `**${p.elo}**`, inline: true },
       { name: "Peak Elo", value: `${p.peakElo}`, inline: true },
       { name: "Matches", value: `${p.matchesPlayed}`, inline: true },
-      { name: "Wins", value: `${p.wins} (${p.matchesPlayed ? Math.round((p.wins / p.matchesPlayed) * 100) : 0}%)`, inline: true },
+      { name: "Wins", value: `${p.wins}`, inline: true },
+      { name: "Win rate", value: `${p.matchesPlayed ? Math.round((p.wins / p.matchesPlayed) * 100) : 0}%`, inline: true },
       { name: "KPG", value: p.careerKpg.toFixed(2), inline: true },
       { name: "K/D", value: p.kdRatio.toFixed(2), inline: true },
-      { name: "Kills / Deaths", value: `${p.totalKills} / ${p.totalDeaths}`, inline: true },
-      { name: "Time alive", value: formatUptime(p.totalUptimeSec), inline: true },
-      { name: "​", value: "​", inline: true },
+      { name: "Kills", value: `${p.totalKills}`, inline: true },
+      { name: "Deaths", value: `${p.totalDeaths}`, inline: true },
       { name: `Last ${p.lastFiveDeltas.length || ""} matches ${trend}`.replace(/\s+/g, " "), value: deltaLines },
     )
     .setFooter({ text: `Player since` })
@@ -142,7 +142,7 @@ function recapLine(r: PlayerMatchResult): string {
   return (
     `${placementLabel(r.placement)} **${esc(r.name)}** — \`${Math.round(r.eloBefore)} → ${Math.round(r.eloAfter)}\` ` +
     `**${signed(r.delta)}**\n` +
-    `　${r.kills}K / ${r.deaths}D · ${formatUptime(r.uptimeSec)} alive · MPS ${Math.round(r.mps)} · IPM ×${r.ipm.toFixed(2)} · ${tier}`
+    `　${r.kills}K / ${r.deaths}D · MPS ${Math.round(r.mps)} · IPM ×${r.ipm.toFixed(2)} · ${tier}`
   );
 }
 

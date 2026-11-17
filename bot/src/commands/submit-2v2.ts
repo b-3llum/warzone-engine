@@ -7,7 +7,7 @@ const placementChoices = [1, 2, 3, 4].map((n) => ({ name: ["1st", "2nd", "3rd", 
 export const submit2v2: Command = {
   data: new SlashCommandBuilder()
     .setName("submit-2v2")
-    .setDescription("Submit a 2v2 Warzone Rebirth match (you'll enter kills/deaths/uptime next)")
+    .setDescription("Submit a 2v2 Warzone Rebirth match (you'll enter kills/deaths next)")
     .setContexts(InteractionContextType.Guild)
     .addUserOption((o) => o.setName("team1_player1").setDescription("Team 1 — first player").setRequired(true))
     .addUserOption((o) => o.setName("team1_player2").setDescription("Team 1 — second player").setRequired(true))

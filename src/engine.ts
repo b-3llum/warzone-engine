@@ -51,7 +51,6 @@ export const TIER_ORDER: ReadonlyArray<RankedTier> = TIER_FLOORS.map((t) => t.ti
 // Sanity caps to reject garbage from the bot / typos.
 const MAX_KILLS = 200;
 const MAX_DEATHS = 200;
-const MAX_UPTIME_SEC = 4 * 60 * 60;
 const MAX_NAME_LEN = 64;
 const MAX_ID_LEN = 64;
 
@@ -134,8 +133,7 @@ export function validateMatchInput(raw: unknown): ValidatedMatch {
     if (!isNonNegInt(r.deaths, MAX_DEATHS)) errors.push(`${at}.deaths must be an integer 0-${MAX_DEATHS}.`);
     if (!isNonNegInt(r.placement, LOBBY_SIZE) || (r.placement as number) < 1)
       errors.push(`${at}.placement must be an integer 1-${LOBBY_SIZE}.`);
-    if (typeof r.uptimeSec !== "number" || !Number.isFinite(r.uptimeSec) || r.uptimeSec < 0 || r.uptimeSec > MAX_UPTIME_SEC)
-      errors.push(`${at}.uptimeSec must be a number 0-${MAX_UPTIME_SEC}.`);
+    // `uptimeSec` is no longer part of the rating and is ignored if an older client still sends it.
     if (r.team !== undefined && r.team !== null && (!Number.isInteger(r.team) || (r.team as number) < 0))
       errors.push(`${at}.team must be a non-negative integer when provided.`);
 
@@ -146,7 +144,6 @@ export function validateMatchInput(raw: unknown): ValidatedMatch {
       kills: r.kills as number,
       deaths: r.deaths as number,
       placement: r.placement as number,
-      uptimeSec: r.uptimeSec as number,
     });
   });
 
@@ -193,10 +190,10 @@ export const placementPoints = (placement: number): number => PLACEMENT_POINTS[p
 export const careerKpg = (p: Pick<PlayerRecord, "totalKills" | "matchesPlayed">): number =>
   p.matchesPlayed > 0 ? p.totalKills / p.matchesPlayed : 0;
 
-/** MPS = kills*15 + placement_pts + uptime*0.1 - deaths*12 + kpg_delta*10, floored at 0. */
+/** MPS = kills*15 + placement_pts - deaths*12 + kpg_delta*10, floored at 0. */
 export function computeMps(p: MatchPlayerInput, playerCareerKpg: number): number {
   const kpgDelta = p.kills - playerCareerKpg;
-  const mps = p.kills * 15 + placementPoints(p.placement) + p.uptimeSec * 0.1 - p.deaths * 12 + kpgDelta * 10;
+  const mps = p.kills * 15 + placementPoints(p.placement) - p.deaths * 12 + kpgDelta * 10;
   return Math.max(0, mps);
 }
 
@@ -257,7 +254,6 @@ function newPlayer(id: string, name: string, nowIso: string): PlayerRecord {
     wins: 0,
     totalKills: 0,
     totalDeaths: 0,
-    totalUptimeSec: 0,
     createdAt: nowIso,
     updatedAt: nowIso,
     history: [],
@@ -364,7 +360,6 @@ export function processMatch(
     r.matchesPlayed += 1;
     r.totalKills += c.input.kills;
     r.totalDeaths += c.input.deaths;
-    r.totalUptimeSec += c.input.uptimeSec;
     if (c.input.placement === 1) r.wins += 1;
     r.updatedAt = nowIso;
 
@@ -376,7 +371,6 @@ export function processMatch(
       placement: c.input.placement,
       kills: c.input.kills,
       deaths: c.input.deaths,
-      uptimeSec: c.input.uptimeSec,
       careerKpgBefore: round(c.kpgBefore, 3),
       mps: round(c.mps),
       lobbyAvgMps: round(lobbyAvgMps),
@@ -396,7 +390,6 @@ export function processMatch(
       placement: c.input.placement,
       kills: c.input.kills,
       deaths: c.input.deaths,
-      uptimeSec: c.input.uptimeSec,
       careerKpgBefore: round(c.kpgBefore, 3),
       kpgDelta: round(c.input.kills - c.kpgBefore, 3),
       mps: round(c.mps),

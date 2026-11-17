@@ -48,7 +48,6 @@ export interface RecentDelta {
 }
 
 export interface PlayerDetail extends PlayerSummary {
-  totalUptimeSec: number;
   createdAt: string;
   updatedAt: string;
   /** Most recent first. */
@@ -62,7 +61,6 @@ export interface MatchPlayerPayload {
   kills: number;
   deaths: number;
   placement: number;
-  uptimeSec: number;
 }
 
 export interface MatchPayload {
@@ -86,7 +84,6 @@ export interface PlayerMatchResult {
   placement: number;
   kills: number;
   deaths: number;
-  uptimeSec: number;
   careerKpgBefore: number;
   kpgDelta: number;
   mps: number;

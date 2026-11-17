@@ -1,6 +1,6 @@
 /**
  * In-memory store bridging a slash command (who played, placements) and the
- * modal submission that follows (kills/deaths/uptime). Keyed by the slash
+ * modal submission that follows (kills/deaths). Keyed by the slash
  * command's interaction.id, which is also used as the Worker matchId.
  *
  * Entries expire after the modal window; a bot restart simply asks the user to re-run the command.
