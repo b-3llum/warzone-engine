@@ -279,6 +279,7 @@ export function summarizePlayer(p: PlayerRecord, rank: number | null): PlayerSum
     totalDeaths: p.totalDeaths,
     careerKpg: round(careerKpg(p), 2),
     kdRatio: round(p.totalDeaths > 0 ? p.totalKills / p.totalDeaths : p.totalKills, 2),
+    lastDelta: p.history[0]?.delta ?? null,
   };
 }
 

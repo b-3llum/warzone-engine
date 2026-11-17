@@ -140,7 +140,15 @@ async function handleLeaderboard(env: Env, url: URL): Promise<Response> {
   const tierFilter = url.searchParams.get("tier");
   if (tierFilter) {
     const t = tierFilter.toUpperCase();
-    return json({ ...board, players: board.players.filter((p) => p.tier === t), tiers: board.tiers.filter((g) => g.tier === t) });
+    if (t === "UNRANKED") {
+      return json({ ...board, players: board.unranked, tiers: [] });
+    }
+    return json({
+      ...board,
+      players: board.players.filter((p) => p.tier === t),
+      tiers: board.tiers.filter((g) => g.tier === t),
+      unranked: [],
+    });
   }
   return json(board);
 }

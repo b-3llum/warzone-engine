@@ -159,6 +159,8 @@ export interface PlayerSummary {
   totalDeaths: number;
   careerKpg: number;
   kdRatio: number;
+  /** Rating change from the player's most recent match (null if none). */
+  lastDelta: number | null;
 }
 
 export interface ApiError {
