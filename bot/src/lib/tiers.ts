@@ -18,7 +18,7 @@ export const TIER_BADGE: Record<TierGroup, string> = {
   B: "🟢",
   C: "🟡",
   D: "⚪",
-  UNRANKED: "⬛",
+  UNRANKED: "⏳",
 };
 
 export const isUnranked = (tier: TierLabel): boolean => tier.startsWith("UNRANKED");
