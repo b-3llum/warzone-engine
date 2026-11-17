@@ -54,6 +54,19 @@ interface RequestOptions {
 }
 
 const RETRYABLE_STATUS = new Set([429, 502, 503, 504]);
+
+/**
+ * Node's fetch reports every network failure as "fetch failed"; the real reason
+ * (ENOTFOUND, ECONNREFUSED, timeout, TLS error...) is on `cause`.
+ */
+function describeNetworkError(err: unknown): string {
+  if (!(err instanceof Error)) return String(err);
+  if (err.name === "TimeoutError") return "request timed out";
+  const cause = err.cause as { code?: string; message?: string } | undefined;
+  if (cause?.code) return `${err.message} (${cause.code}${cause.message ? `: ${cause.message}` : ""})`;
+  if (cause?.message) return `${err.message} (${cause.message})`;
+  return err.message;
+}
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export class WorkerClient {
@@ -120,7 +133,7 @@ export class WorkerClient {
         });
       } catch (err) {
         lastNetworkError = err;
-        console.warn(`[api] ${method} ${path} attempt ${attempt}/${attempts} failed:`, (err as Error).message);
+        console.warn(`[api] ${method} ${url} attempt ${attempt}/${attempts} failed: ${describeNetworkError(err)}`);
         continue;
       }
 
@@ -148,7 +161,7 @@ export class WorkerClient {
       throw apiErr;
     }
 
-    const reason = lastNetworkError instanceof Error ? lastNetworkError.message : String(lastNetworkError);
+    const reason = describeNetworkError(lastNetworkError);
     throw new WorkerNetworkError(`Rating engine unreachable after ${attempts} attempt(s): ${reason}`, {
       cause: lastNetworkError,
     });
